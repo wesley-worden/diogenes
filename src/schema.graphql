@@ -1,0 +1,43 @@
+type Shitpost {
+    id: ID! 
+    postedBy: User! 
+    createdAt: String! 
+    encryptedContent: String!
+    channel: Channel!
+}
+
+type Channel {
+    id: ID! 
+    owner: User! 
+    createdAt: String! 
+    members: [User!] 
+    shitposts: [Shitpost!] 
+}
+
+type User {
+    id: ID! 
+    name: String!
+    memberOfChannels: [Channel!]  
+    ownerOfChannels: [Channel!] 
+}
+
+type AuthPayload {
+    token: String
+    user: User
+}
+type Query {
+    getShitpost(id: ID!): Shitpost
+    getChannel(id: ID!): Channel
+    getUser(id: ID!): User
+}
+
+type Mutation {
+    login(email: String!, password: String!): AuthPayload
+    signup(email: String!, password: String!, name: String!): AuthPayload
+    createChannel(members: [ID!]): Channel
+    addMembers(channelId: ID!, members: [ID!]!): Channel
+    shitpost(encryptedContent: String!, channelId: ID!): Shitpost
+    deleteshitpost(postId: ID!): ID!
+    removeMembers(channelId: ID!, members: [ID!]!): Channel!
+    deleteChannel(channelId: ID!): ID!
+}

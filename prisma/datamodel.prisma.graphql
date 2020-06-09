@@ -1,0 +1,22 @@
+type Shitpost {
+    id: ID! @id
+    postedBy: User! @relation(link: INLINE)
+    createdAt: DateTime! @createdAt
+    encryptedContent: String!
+    channel: Channel!
+}
+
+type Channel {
+    id: ID! @id
+    owner: User! @relation(name: "Owner")
+    createdAt: DateTime! @createdAt
+    members: [User!] @relation(name: "Member")
+    shitposts: [Shitpost!] @relation(link: INLINE)
+}
+
+type User {
+    id: ID! @id
+    name: String!
+    memberOfChannels: [Channel!]  @relation(name: "Member", link: INLINE)
+    ownerOfChannels: [Channel!] @relation(name: "Owner", link: INLINE)
+}
