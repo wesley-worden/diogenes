@@ -21,6 +21,7 @@ type BatchPayload {
 
 type Channel {
   id: ID!
+  name: String!
   owner: User!
   createdAt: DateTime!
   members(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
@@ -35,6 +36,7 @@ type ChannelConnection {
 
 input ChannelCreateInput {
   id: ID
+  name: String!
   owner: UserCreateOneWithoutOwnerOfChannelsInput!
   members: UserCreateManyWithoutMemberOfChannelsInput
   shitposts: ShitpostCreateManyWithoutChannelInput
@@ -57,18 +59,21 @@ input ChannelCreateOneWithoutShitpostsInput {
 
 input ChannelCreateWithoutMembersInput {
   id: ID
+  name: String!
   owner: UserCreateOneWithoutOwnerOfChannelsInput!
   shitposts: ShitpostCreateManyWithoutChannelInput
 }
 
 input ChannelCreateWithoutOwnerInput {
   id: ID
+  name: String!
   members: UserCreateManyWithoutMemberOfChannelsInput
   shitposts: ShitpostCreateManyWithoutChannelInput
 }
 
 input ChannelCreateWithoutShitpostsInput {
   id: ID
+  name: String!
   owner: UserCreateOneWithoutOwnerOfChannelsInput!
   members: UserCreateManyWithoutMemberOfChannelsInput
 }
@@ -81,12 +86,15 @@ type ChannelEdge {
 enum ChannelOrderByInput {
   id_ASC
   id_DESC
+  name_ASC
+  name_DESC
   createdAt_ASC
   createdAt_DESC
 }
 
 type ChannelPreviousValues {
   id: ID!
+  name: String!
   createdAt: DateTime!
 }
 
@@ -105,6 +113,20 @@ input ChannelScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -137,9 +159,18 @@ input ChannelSubscriptionWhereInput {
 }
 
 input ChannelUpdateInput {
+  name: String
   owner: UserUpdateOneRequiredWithoutOwnerOfChannelsInput
   members: UserUpdateManyWithoutMemberOfChannelsInput
   shitposts: ShitpostUpdateManyWithoutChannelInput
+}
+
+input ChannelUpdateManyDataInput {
+  name: String
+}
+
+input ChannelUpdateManyMutationInput {
+  name: String
 }
 
 input ChannelUpdateManyWithoutMembersInput {
@@ -151,6 +182,7 @@ input ChannelUpdateManyWithoutMembersInput {
   update: [ChannelUpdateWithWhereUniqueWithoutMembersInput!]
   upsert: [ChannelUpsertWithWhereUniqueWithoutMembersInput!]
   deleteMany: [ChannelScalarWhereInput!]
+  updateMany: [ChannelUpdateManyWithWhereNestedInput!]
 }
 
 input ChannelUpdateManyWithoutOwnerInput {
@@ -162,6 +194,12 @@ input ChannelUpdateManyWithoutOwnerInput {
   update: [ChannelUpdateWithWhereUniqueWithoutOwnerInput!]
   upsert: [ChannelUpsertWithWhereUniqueWithoutOwnerInput!]
   deleteMany: [ChannelScalarWhereInput!]
+  updateMany: [ChannelUpdateManyWithWhereNestedInput!]
+}
+
+input ChannelUpdateManyWithWhereNestedInput {
+  where: ChannelScalarWhereInput!
+  data: ChannelUpdateManyDataInput!
 }
 
 input ChannelUpdateOneRequiredWithoutShitpostsInput {
@@ -172,16 +210,19 @@ input ChannelUpdateOneRequiredWithoutShitpostsInput {
 }
 
 input ChannelUpdateWithoutMembersDataInput {
+  name: String
   owner: UserUpdateOneRequiredWithoutOwnerOfChannelsInput
   shitposts: ShitpostUpdateManyWithoutChannelInput
 }
 
 input ChannelUpdateWithoutOwnerDataInput {
+  name: String
   members: UserUpdateManyWithoutMemberOfChannelsInput
   shitposts: ShitpostUpdateManyWithoutChannelInput
 }
 
 input ChannelUpdateWithoutShitpostsDataInput {
+  name: String
   owner: UserUpdateOneRequiredWithoutOwnerOfChannelsInput
   members: UserUpdateManyWithoutMemberOfChannelsInput
 }
@@ -228,6 +269,20 @@ input ChannelWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
   owner: UserWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
@@ -250,6 +305,7 @@ input ChannelWhereInput {
 
 input ChannelWhereUniqueInput {
   id: ID
+  name: String
 }
 
 scalar DateTime
@@ -259,6 +315,7 @@ scalar Long
 type Mutation {
   createChannel(data: ChannelCreateInput!): Channel!
   updateChannel(data: ChannelUpdateInput!, where: ChannelWhereUniqueInput!): Channel
+  updateManyChannels(data: ChannelUpdateManyMutationInput!, where: ChannelWhereInput): BatchPayload!
   upsertChannel(where: ChannelWhereUniqueInput!, create: ChannelCreateInput!, update: ChannelUpdateInput!): Channel!
   deleteChannel(where: ChannelWhereUniqueInput!): Channel
   deleteManyChannels(where: ChannelWhereInput): BatchPayload!
@@ -524,6 +581,8 @@ type User {
   name: String!
   memberOfChannels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel!]
   ownerOfChannels(where: ChannelWhereInput, orderBy: ChannelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Channel!]
+  email: String!
+  password: String!
 }
 
 type UserConnection {
@@ -537,6 +596,8 @@ input UserCreateInput {
   name: String!
   memberOfChannels: ChannelCreateManyWithoutMembersInput
   ownerOfChannels: ChannelCreateManyWithoutOwnerInput
+  email: String!
+  password: String!
 }
 
 input UserCreateManyWithoutMemberOfChannelsInput {
@@ -558,12 +619,16 @@ input UserCreateWithoutMemberOfChannelsInput {
   id: ID
   name: String!
   ownerOfChannels: ChannelCreateManyWithoutOwnerInput
+  email: String!
+  password: String!
 }
 
 input UserCreateWithoutOwnerOfChannelsInput {
   id: ID
   name: String!
   memberOfChannels: ChannelCreateManyWithoutMembersInput
+  email: String!
+  password: String!
 }
 
 type UserEdge {
@@ -576,11 +641,17 @@ enum UserOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  email_ASC
+  email_DESC
+  password_ASC
+  password_DESC
 }
 
 type UserPreviousValues {
   id: ID!
   name: String!
+  email: String!
+  password: String!
 }
 
 input UserScalarWhereInput {
@@ -612,6 +683,34 @@ input UserScalarWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  password: String
+  password_not: String
+  password_in: [String!]
+  password_not_in: [String!]
+  password_lt: String
+  password_lte: String
+  password_gt: String
+  password_gte: String
+  password_contains: String
+  password_not_contains: String
+  password_starts_with: String
+  password_not_starts_with: String
+  password_ends_with: String
+  password_not_ends_with: String
   AND: [UserScalarWhereInput!]
   OR: [UserScalarWhereInput!]
   NOT: [UserScalarWhereInput!]
@@ -639,20 +738,28 @@ input UserUpdateDataInput {
   name: String
   memberOfChannels: ChannelUpdateManyWithoutMembersInput
   ownerOfChannels: ChannelUpdateManyWithoutOwnerInput
+  email: String
+  password: String
 }
 
 input UserUpdateInput {
   name: String
   memberOfChannels: ChannelUpdateManyWithoutMembersInput
   ownerOfChannels: ChannelUpdateManyWithoutOwnerInput
+  email: String
+  password: String
 }
 
 input UserUpdateManyDataInput {
   name: String
+  email: String
+  password: String
 }
 
 input UserUpdateManyMutationInput {
   name: String
+  email: String
+  password: String
 }
 
 input UserUpdateManyWithoutMemberOfChannelsInput {
@@ -689,11 +796,15 @@ input UserUpdateOneRequiredWithoutOwnerOfChannelsInput {
 input UserUpdateWithoutMemberOfChannelsDataInput {
   name: String
   ownerOfChannels: ChannelUpdateManyWithoutOwnerInput
+  email: String
+  password: String
 }
 
 input UserUpdateWithoutOwnerOfChannelsDataInput {
   name: String
   memberOfChannels: ChannelUpdateManyWithoutMembersInput
+  email: String
+  password: String
 }
 
 input UserUpdateWithWhereUniqueWithoutMemberOfChannelsInput {
@@ -752,6 +863,34 @@ input UserWhereInput {
   ownerOfChannels_every: ChannelWhereInput
   ownerOfChannels_some: ChannelWhereInput
   ownerOfChannels_none: ChannelWhereInput
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  password: String
+  password_not: String
+  password_in: [String!]
+  password_not_in: [String!]
+  password_lt: String
+  password_lte: String
+  password_gt: String
+  password_gte: String
+  password_contains: String
+  password_not_contains: String
+  password_starts_with: String
+  password_not_starts_with: String
+  password_ends_with: String
+  password_not_ends_with: String
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
@@ -759,6 +898,8 @@ input UserWhereInput {
 
 input UserWhereUniqueInput {
   id: ID
+  name: String
+  email: String
 }
 `
       }

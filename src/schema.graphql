@@ -7,7 +7,8 @@ type Shitpost {
 }
 
 type Channel {
-    id: ID! 
+    id: ID!
+    name: String!
     owner: User! 
     createdAt: String! 
     members: [User!] 
@@ -34,10 +35,10 @@ type Query {
 type Mutation {
     login(email: String!, password: String!): AuthPayload
     signup(email: String!, password: String!, name: String!): AuthPayload
-    createChannel(members: [ID!]): Channel
+    createChannel(name: String!): Channel
     addMembers(channelId: ID!, members: [ID!]!): Channel
     shitpost(encryptedContent: String!, channelId: ID!): Shitpost
-    deleteshitpost(postId: ID!): ID!
+    deleteShitpost(shitpostId: ID!): Shitpost
     removeMembers(channelId: ID!, members: [ID!]!): Channel!
-    deleteChannel(channelId: ID!): ID!
+    deleteChannel(channelId: ID!): Channel
 }

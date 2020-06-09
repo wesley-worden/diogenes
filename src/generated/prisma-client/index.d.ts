@@ -108,6 +108,10 @@ export interface Prisma {
     data: ChannelUpdateInput;
     where: ChannelWhereUniqueInput;
   }) => ChannelPromise;
+  updateManyChannels: (args: {
+    data: ChannelUpdateManyMutationInput;
+    where?: ChannelWhereInput;
+  }) => BatchPayloadPromise;
   upsertChannel: (args: {
     where: ChannelWhereUniqueInput;
     create: ChannelCreateInput;
@@ -178,10 +182,20 @@ export interface ClientConstructor<T> {
 export type ChannelOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC";
 
-export type UserOrderByInput = "id_ASC" | "id_DESC" | "name_ASC" | "name_DESC";
+export type UserOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "email_ASC"
+  | "email_DESC"
+  | "password_ASC"
+  | "password_DESC";
 
 export type ShitpostOrderByInput =
   | "id_ASC"
@@ -195,6 +209,7 @@ export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
 export type ChannelWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  name?: Maybe<String>;
 }>;
 
 export interface ChannelWhereInput {
@@ -212,6 +227,20 @@ export interface ChannelWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
   owner?: Maybe<UserWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
@@ -267,6 +296,34 @@ export interface UserWhereInput {
   ownerOfChannels_every?: Maybe<ChannelWhereInput>;
   ownerOfChannels_some?: Maybe<ChannelWhereInput>;
   ownerOfChannels_none?: Maybe<ChannelWhereInput>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  password?: Maybe<String>;
+  password_not?: Maybe<String>;
+  password_in?: Maybe<String[] | String>;
+  password_not_in?: Maybe<String[] | String>;
+  password_lt?: Maybe<String>;
+  password_lte?: Maybe<String>;
+  password_gt?: Maybe<String>;
+  password_gte?: Maybe<String>;
+  password_contains?: Maybe<String>;
+  password_not_contains?: Maybe<String>;
+  password_starts_with?: Maybe<String>;
+  password_not_starts_with?: Maybe<String>;
+  password_ends_with?: Maybe<String>;
+  password_not_ends_with?: Maybe<String>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
@@ -322,10 +379,13 @@ export type ShitpostWhereUniqueInput = AtLeastOne<{
 
 export type UserWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  email?: Maybe<String>;
 }>;
 
 export interface ChannelCreateInput {
   id?: Maybe<ID_Input>;
+  name: String;
   owner: UserCreateOneWithoutOwnerOfChannelsInput;
   members?: Maybe<UserCreateManyWithoutMemberOfChannelsInput>;
   shitposts?: Maybe<ShitpostCreateManyWithoutChannelInput>;
@@ -340,6 +400,8 @@ export interface UserCreateWithoutOwnerOfChannelsInput {
   id?: Maybe<ID_Input>;
   name: String;
   memberOfChannels?: Maybe<ChannelCreateManyWithoutMembersInput>;
+  email: String;
+  password: String;
 }
 
 export interface ChannelCreateManyWithoutMembersInput {
@@ -351,6 +413,7 @@ export interface ChannelCreateManyWithoutMembersInput {
 
 export interface ChannelCreateWithoutMembersInput {
   id?: Maybe<ID_Input>;
+  name: String;
   owner: UserCreateOneWithoutOwnerOfChannelsInput;
   shitposts?: Maybe<ShitpostCreateManyWithoutChannelInput>;
 }
@@ -378,6 +441,8 @@ export interface UserCreateInput {
   name: String;
   memberOfChannels?: Maybe<ChannelCreateManyWithoutMembersInput>;
   ownerOfChannels?: Maybe<ChannelCreateManyWithoutOwnerInput>;
+  email: String;
+  password: String;
 }
 
 export interface ChannelCreateManyWithoutOwnerInput {
@@ -389,6 +454,7 @@ export interface ChannelCreateManyWithoutOwnerInput {
 
 export interface ChannelCreateWithoutOwnerInput {
   id?: Maybe<ID_Input>;
+  name: String;
   members?: Maybe<UserCreateManyWithoutMemberOfChannelsInput>;
   shitposts?: Maybe<ShitpostCreateManyWithoutChannelInput>;
 }
@@ -405,9 +471,12 @@ export interface UserCreateWithoutMemberOfChannelsInput {
   id?: Maybe<ID_Input>;
   name: String;
   ownerOfChannels?: Maybe<ChannelCreateManyWithoutOwnerInput>;
+  email: String;
+  password: String;
 }
 
 export interface ChannelUpdateInput {
+  name?: Maybe<String>;
   owner?: Maybe<UserUpdateOneRequiredWithoutOwnerOfChannelsInput>;
   members?: Maybe<UserUpdateManyWithoutMemberOfChannelsInput>;
   shitposts?: Maybe<ShitpostUpdateManyWithoutChannelInput>;
@@ -423,6 +492,8 @@ export interface UserUpdateOneRequiredWithoutOwnerOfChannelsInput {
 export interface UserUpdateWithoutOwnerOfChannelsDataInput {
   name?: Maybe<String>;
   memberOfChannels?: Maybe<ChannelUpdateManyWithoutMembersInput>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
 }
 
 export interface ChannelUpdateManyWithoutMembersInput {
@@ -442,6 +513,10 @@ export interface ChannelUpdateManyWithoutMembersInput {
     | ChannelUpsertWithWhereUniqueWithoutMembersInput
   >;
   deleteMany?: Maybe<ChannelScalarWhereInput[] | ChannelScalarWhereInput>;
+  updateMany?: Maybe<
+    | ChannelUpdateManyWithWhereNestedInput[]
+    | ChannelUpdateManyWithWhereNestedInput
+  >;
 }
 
 export interface ChannelUpdateWithWhereUniqueWithoutMembersInput {
@@ -450,6 +525,7 @@ export interface ChannelUpdateWithWhereUniqueWithoutMembersInput {
 }
 
 export interface ChannelUpdateWithoutMembersDataInput {
+  name?: Maybe<String>;
   owner?: Maybe<UserUpdateOneRequiredWithoutOwnerOfChannelsInput>;
   shitposts?: Maybe<ShitpostUpdateManyWithoutChannelInput>;
 }
@@ -498,6 +574,8 @@ export interface UserUpdateDataInput {
   name?: Maybe<String>;
   memberOfChannels?: Maybe<ChannelUpdateManyWithoutMembersInput>;
   ownerOfChannels?: Maybe<ChannelUpdateManyWithoutOwnerInput>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
 }
 
 export interface ChannelUpdateManyWithoutOwnerInput {
@@ -517,6 +595,10 @@ export interface ChannelUpdateManyWithoutOwnerInput {
     | ChannelUpsertWithWhereUniqueWithoutOwnerInput
   >;
   deleteMany?: Maybe<ChannelScalarWhereInput[] | ChannelScalarWhereInput>;
+  updateMany?: Maybe<
+    | ChannelUpdateManyWithWhereNestedInput[]
+    | ChannelUpdateManyWithWhereNestedInput
+  >;
 }
 
 export interface ChannelUpdateWithWhereUniqueWithoutOwnerInput {
@@ -525,6 +607,7 @@ export interface ChannelUpdateWithWhereUniqueWithoutOwnerInput {
 }
 
 export interface ChannelUpdateWithoutOwnerDataInput {
+  name?: Maybe<String>;
   members?: Maybe<UserUpdateManyWithoutMemberOfChannelsInput>;
   shitposts?: Maybe<ShitpostUpdateManyWithoutChannelInput>;
 }
@@ -560,6 +643,8 @@ export interface UserUpdateWithWhereUniqueWithoutMemberOfChannelsInput {
 export interface UserUpdateWithoutMemberOfChannelsDataInput {
   name?: Maybe<String>;
   ownerOfChannels?: Maybe<ChannelUpdateManyWithoutOwnerInput>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
 }
 
 export interface UserUpsertWithWhereUniqueWithoutMemberOfChannelsInput {
@@ -597,6 +682,34 @@ export interface UserScalarWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  password?: Maybe<String>;
+  password_not?: Maybe<String>;
+  password_in?: Maybe<String[] | String>;
+  password_not_in?: Maybe<String[] | String>;
+  password_lt?: Maybe<String>;
+  password_lte?: Maybe<String>;
+  password_gt?: Maybe<String>;
+  password_gte?: Maybe<String>;
+  password_contains?: Maybe<String>;
+  password_not_contains?: Maybe<String>;
+  password_starts_with?: Maybe<String>;
+  password_not_starts_with?: Maybe<String>;
+  password_ends_with?: Maybe<String>;
+  password_not_ends_with?: Maybe<String>;
   AND?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
   OR?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
   NOT?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
@@ -609,6 +722,8 @@ export interface UserUpdateManyWithWhereNestedInput {
 
 export interface UserUpdateManyDataInput {
   name?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
 }
 
 export interface ChannelUpsertWithWhereUniqueWithoutOwnerInput {
@@ -632,6 +747,20 @@ export interface ChannelScalarWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -643,6 +772,15 @@ export interface ChannelScalarWhereInput {
   AND?: Maybe<ChannelScalarWhereInput[] | ChannelScalarWhereInput>;
   OR?: Maybe<ChannelScalarWhereInput[] | ChannelScalarWhereInput>;
   NOT?: Maybe<ChannelScalarWhereInput[] | ChannelScalarWhereInput>;
+}
+
+export interface ChannelUpdateManyWithWhereNestedInput {
+  where: ChannelScalarWhereInput;
+  data: ChannelUpdateManyDataInput;
+}
+
+export interface ChannelUpdateManyDataInput {
+  name?: Maybe<String>;
 }
 
 export interface UserUpsertNestedInput {
@@ -718,6 +856,10 @@ export interface UserUpsertWithoutOwnerOfChannelsInput {
   create: UserCreateWithoutOwnerOfChannelsInput;
 }
 
+export interface ChannelUpdateManyMutationInput {
+  name?: Maybe<String>;
+}
+
 export interface ShitpostCreateInput {
   id?: Maybe<ID_Input>;
   postedBy: UserCreateOneInput;
@@ -732,6 +874,7 @@ export interface ChannelCreateOneWithoutShitpostsInput {
 
 export interface ChannelCreateWithoutShitpostsInput {
   id?: Maybe<ID_Input>;
+  name: String;
   owner: UserCreateOneWithoutOwnerOfChannelsInput;
   members?: Maybe<UserCreateManyWithoutMemberOfChannelsInput>;
 }
@@ -750,6 +893,7 @@ export interface ChannelUpdateOneRequiredWithoutShitpostsInput {
 }
 
 export interface ChannelUpdateWithoutShitpostsDataInput {
+  name?: Maybe<String>;
   owner?: Maybe<UserUpdateOneRequiredWithoutOwnerOfChannelsInput>;
   members?: Maybe<UserUpdateManyWithoutMemberOfChannelsInput>;
 }
@@ -767,10 +911,14 @@ export interface UserUpdateInput {
   name?: Maybe<String>;
   memberOfChannels?: Maybe<ChannelUpdateManyWithoutMembersInput>;
   ownerOfChannels?: Maybe<ChannelUpdateManyWithoutOwnerInput>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
 }
 
 export interface UserUpdateManyMutationInput {
   name?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
 }
 
 export interface ChannelSubscriptionWhereInput {
@@ -816,11 +964,13 @@ export interface NodeNode {
 
 export interface Channel {
   id: ID_Output;
+  name: String;
   createdAt: DateTimeOutput;
 }
 
 export interface ChannelPromise extends Promise<Channel>, Fragmentable {
   id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
   owner: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   members: <T = FragmentableArray<User>>(args?: {
@@ -847,6 +997,7 @@ export interface ChannelSubscription
   extends Promise<AsyncIterator<Channel>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
   owner: <T = UserSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   members: <T = Promise<AsyncIterator<UserSubscription>>>(args?: {
@@ -873,6 +1024,7 @@ export interface ChannelNullablePromise
   extends Promise<Channel | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
   owner: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   members: <T = FragmentableArray<User>>(args?: {
@@ -898,6 +1050,8 @@ export interface ChannelNullablePromise
 export interface User {
   id: ID_Output;
   name: String;
+  email: String;
+  password: String;
 }
 
 export interface UserPromise extends Promise<User>, Fragmentable {
@@ -921,6 +1075,8 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
 }
 
 export interface UserSubscription
@@ -946,6 +1102,8 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
 }
 
 export interface UserNullablePromise
@@ -971,6 +1129,8 @@ export interface UserNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
 }
 
 export interface Shitpost {
@@ -1237,6 +1397,7 @@ export interface ChannelSubscriptionPayloadSubscription
 
 export interface ChannelPreviousValues {
   id: ID_Output;
+  name: String;
   createdAt: DateTimeOutput;
 }
 
@@ -1244,6 +1405,7 @@ export interface ChannelPreviousValuesPromise
   extends Promise<ChannelPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
 }
 
@@ -1251,6 +1413,7 @@ export interface ChannelPreviousValuesSubscription
   extends Promise<AsyncIterator<ChannelPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
@@ -1329,6 +1492,8 @@ export interface UserSubscriptionPayloadSubscription
 export interface UserPreviousValues {
   id: ID_Output;
   name: String;
+  email: String;
+  password: String;
 }
 
 export interface UserPreviousValuesPromise
@@ -1336,6 +1501,8 @@ export interface UserPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
 }
 
 export interface UserPreviousValuesSubscription
@@ -1343,6 +1510,8 @@ export interface UserPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
 }
 
 /*

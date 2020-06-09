@@ -8,6 +8,7 @@ type Shitpost {
 
 type Channel {
     id: ID! @id
+    name: String! @unique
     owner: User! @relation(name: "Owner")
     createdAt: DateTime! @createdAt
     members: [User!] @relation(name: "Member")
@@ -16,7 +17,9 @@ type Channel {
 
 type User {
     id: ID! @id
-    name: String!
+    name: String! @unique
     memberOfChannels: [Channel!]  @relation(name: "Member", link: INLINE)
     ownerOfChannels: [Channel!] @relation(name: "Owner", link: INLINE)
+    email: String! @unique
+    password: String!
 }
