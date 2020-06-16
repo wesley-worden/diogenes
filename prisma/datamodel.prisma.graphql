@@ -3,7 +3,7 @@ type Shitpost {
     postedBy: User! @relation(link: INLINE)
     createdAt: DateTime! @createdAt
     encryptedContent: String!
-    channel: Channel!
+    channel: Channel! @relation(name: "Shitpost")
 }
 
 type Channel {
@@ -12,7 +12,7 @@ type Channel {
     owner: User! @relation(name: "Owner")
     createdAt: DateTime! @createdAt
     members: [User!] @relation(name: "Member")
-    shitposts: [Shitpost!] @relation(link: INLINE)
+    shitposts: [Shitpost!] @relation(name: "Shitpost", link: INLINE)
 }
 
 type User {

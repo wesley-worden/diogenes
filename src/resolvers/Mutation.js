@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { APP_SECRET, showMe, getUserId, channelExists } = require('./../utils');
+const { APP_SECRET, showMe, getUserId, channelExists, ensureChannelExists, ensureUserIsChannelOwner, getChannelMembers } = require('./../utils');
 
 const login = async function(parent, args, context, info) {
     //get existing user from prisma database
@@ -37,43 +37,68 @@ const signup = async function(parent, args, context, info) {
     return { token, user }; // AuthPayload object
 };
 
-const createChannel = function(parent, args, context, info) {
+const createChannel = async function(parent, args, context, info) {
     const userId = getUserId(context);
-    const createdChannel = context.prisma.createChannel({
+    const createdChannel = await context.prisma.createChannel({
         name: args.name,
         owner: { connect: { id: userId } }
     });
     return createdChannel;
 };
 
-//help
-// const addMembers = function(parent, args, context, info) {
-//     const userId = getUserId(context);
-//     if (!channelExists(args.channelId)) {
-//         throw new Error("Channel doesn't exist");
-//         return;
-//     }
-//     const channel = context.prisma.channel({ id: args.channelId }); //todo will this throw an error if channel doesnt exist?
-//     if (channel.owner !== userId) {
-//         throw new Error('You are not the owner of this channel!');
-//         return;
-//     }
-//     const members = args.members;
-//     for (member in members) {
+const addMember = async function(parent, args, context, info) {
+    const channelId = args.channelId;
+    const userId = getUserId(context);
+    console.log(`userId: ${userId}`);
+    // if (!context.prisma.$exists.channel({ id: args.channelId })) {
+    // if (!channelExists(args.channelId)) {
+    //     throw new Error("Channel doesn't exist");
+    //     return;
+    // }
 
-//     }
-// };
+    await ensureChannelExists(context, channelId);
+    await ensureUserIsChannelOwner(context, userId, channelId);
+    const members = await getChannelMembers(context, channelId);
+    console.log(members);
+    // const fragment = `
+    // fragment ChannelOwnerId on Channel {
+    //     owner {
+    //         id
+    //     }
+    // }
+    // `;
+    // const channelOwnerId = await context.prisma.channel({ id: args.channelId }).$fragment(fragment).owner.id;
+
+    // if (channelOwnerId !== userId) {
+    //     throw new Error('You are not the owner of this channel!');
+    // }
+    // const channel = await context.prisma.channel({ id: args.channelId }); //todo will this throw an error if channel doesnt exist?
+    // const owner = await context.prisma.channel( { id: args.channelId }).owner;
+    // // showMe(userId);
+    // // showMe(channel.owner);
+    // if (channel.owner !== userId) { //who would win, one member boi
+    // // if (channel.owner() !== userId) { //or one function boi????
+    //     throw new Error('You are not the owner of this channel!');
+    //     return;
+    // }
+
+    // const updatedChannel = context.prisma.updateChannel( {
+    //     where: {
+    //         id: args.channelId
+    //     },
+    //     update: {
+
+    //     }
+    // });
+    // const members = channel.members();
+    // showMe(members);
+};
 
 const shitpost = function(parent, args, context, info) {
     const userId = getUserId(context);
 
     // if (!channelExists(context, args.channelId)) {
     //instead,
-    const channelExists = context.prisma.channel({ id: args.channelId });
-    if (channelExists !== undefined) {
-        throw new Error("Channel doesn't exists");
-        return;
-    }
 
     const createdShitpost = context.prisma.createShitpost({
         postedBy: { connect: { id: userId } },
@@ -108,9 +133,9 @@ module.exports = {
     login,
     signup,
     createChannel,
-    // addMembers,
+    addMember,
     shitpost,
     deleteShitpost,
-    // removeMembers,
+    // removeMember,
     deleteChannel
 };

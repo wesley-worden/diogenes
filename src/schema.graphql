@@ -26,6 +26,7 @@ type AuthPayload {
     token: String
     user: User
 }
+
 type Query {
     getShitpost(id: ID!): Shitpost
     getChannel(id: ID!): Channel
@@ -36,9 +37,9 @@ type Mutation {
     login(email: String!, password: String!): AuthPayload
     signup(email: String!, password: String!, name: String!): AuthPayload
     createChannel(name: String!): Channel
-    addMembers(channelId: ID!, members: [ID!]!): Channel
+    addMember(channelId: ID!, member: ID!): Channel
     shitpost(encryptedContent: String!, channelId: ID!): Shitpost
     deleteShitpost(shitpostId: ID!): Shitpost
-    removeMembers(channelId: ID!, members: [ID!]!): Channel!
+    removeMember(channelId: ID!, member: ID!): Channel!
     deleteChannel(channelId: ID!): Channel
 }
